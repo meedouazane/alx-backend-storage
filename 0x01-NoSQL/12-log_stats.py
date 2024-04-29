@@ -24,7 +24,7 @@ if __name__ == "__main__":
     print(f'{i} logs')
     print('Methods:')
     for method, number in methods.items():
-        print(f'    method {method}: {number}')
+        print(f'\tmethod {method}: {number}')
     status = 0
     result2 = logs_collection.find()
     for check in result2:
