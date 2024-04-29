@@ -11,8 +11,8 @@ if __name__ == "__main__":
         'GET': 0,
         'POST': 0,
         'PUT': 0,
-        'DELETE': 0,
         'PATCH': 0,
+        'DELETE': 0
     }
     i = 0
     for log in result:
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     print(f'{i} logs')
     print('Methods:')
     for method, number in methods.items():
-        print(f'\tmethod {method} : {number}')
+        print(f'    method {method}: {number}')
     status = 0
     result2 = logs_collection.find()
     for check in result2:
