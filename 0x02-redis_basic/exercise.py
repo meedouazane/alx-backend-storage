@@ -38,9 +38,9 @@ def replay(fn: Callable) -> None:
     """
     client = redis.Redis()
     calls = client.get(fn.__qualname__).decode('utf-8')
-    inputs = [item.decode('utf-8') 
+    inputs = [item.decode('utf-8')
               for item in client.lrange(f'{fn.__qualname__}:inputs', 0, -1)]
-    outputs = [item.decode('utf-8') 
+    outputs = [item.decode('utf-8')
                for item in client.lrange(f'{fn.__qualname__}:outputs', 0, -1)]
     print(f'{fn.__qualname__} was called {calls} times:')
     for inp, outp in zip(inputs, outputs):
