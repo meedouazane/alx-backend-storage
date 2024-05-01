@@ -53,7 +53,7 @@ class Cache:
     def __init__(self) -> None:
         """ init method"""
         self._redis = redis.Redis()
-        self._redis.flushdb()
+        self._redis.flushdb(True)
         self.call_count = 0
 
     @count_calls
