@@ -7,7 +7,8 @@ from typing import Callable
 
 
 def tracker(fn: Callable) -> Callable:
-    """ Decorator for get_page """
+    """Decorator for get_page"""
+
     @wraps(fn)
     def wrapper(url: str) -> str:
         client = redis.Redis()
@@ -15,16 +16,32 @@ def tracker(fn: Callable) -> Callable:
         cache_page = client.get(f'{url}')
         if cache_page:
             return cache_page.decode('utf-8')
-        request = fn(url)
-        client.set(f'{url}', request, 10)
+        try:
+            request = fn(url)
+        except Exception as e:
+            return f"Error: {e}"
+        client.set(f'{url}', request, ex=10)
         return request
+
     return wrapper
 
 
 @tracker
 def get_page(url: str) -> str:
     """
-    obtain the HTML content of a particular URL and returns it.
+    Obtain the HTML content of a particular URL and return it.
+
+    :param url: The URL of the page.
+    :return: The HTML content of the page.
     """
-    req = requests.get(url)
-    return req.text
+    try:
+        req = requests.get(url)
+        req.raise_for_status()
+        return req.text
+    except requests.exceptions.RequestException as e:
+        raise Exception(f"Failed to fetch URL: {e}")
+
+
+# Example usage:
+if __name__ == "__main__":
+    print(get_page("http://slowwly.robertomurray.co.uk"))
