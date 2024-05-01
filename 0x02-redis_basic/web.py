@@ -32,16 +32,6 @@ def get_page(url: str) -> str:
     Obtain the HTML content of a particular URL and return it.
 
     :param url: The URL of the page.
-    :return: The HTML content of the page.
     """
-    try:
-        req = requests.get(url)
-        req.raise_for_status()
-        return req.text
-    except requests.exceptions.RequestException as e:
-        raise Exception(f"Failed to fetch URL: {e}")
-
-
-# Example usage:
-if __name__ == "__main__":
-    print(get_page("http://slowwly.robertomurray.co.uk"))
+    req = requests.get(url)
+    return req.text
