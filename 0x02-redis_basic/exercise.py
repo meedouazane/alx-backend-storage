@@ -19,6 +19,34 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
+def call_history(method: Callable) -> Callable:
+    """
+    store the history of inputs and outputs for a particular function
+    """
+    @wraps(method)
+    def wrapper(self, *args):
+        self._redis.rpush(f'{method.__qualname__}:inputs', str(args))
+        output = method(self, *args)
+        self._redis.rpush(f'{method.__qualname__}:outputs', output)
+        return output
+    return wrapper
+
+
+def replay(fn: Callable) -> None:
+    """
+    display the history of calls of a particular function
+    """
+    client = redis.Redis()
+    calls = client.get(fn.__qualname__).decode('utf-8')
+    inputs = [item.decode('utf-8') 
+              for item in client.lrange(f'{fn.__qualname__}:inputs', 0, -1)]
+    outputs = [item.decode('utf-8') 
+               for item in client.lrange(f'{fn.__qualname__}:outputs', 0, -1)]
+    print(f'{fn.__qualname__} was called {calls} times:')
+    for inp, outp in zip(inputs, outputs):
+        print(f'{fn.__qualname__}(*{inp}) -> {outp}')
+
+
 class Cache:
     """ Cache class """
 
@@ -29,6 +57,7 @@ class Cache:
         self.call_count = 0
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, int, float, bytes]) -> str:
         """
         store an instance of the Redis
