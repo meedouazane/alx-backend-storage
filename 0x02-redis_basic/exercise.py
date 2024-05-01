@@ -48,12 +48,15 @@ def replay(fn: Callable) -> None:
 
 
 class Cache:
-    """ Cache class """
+    """
+    Cache class
+    store an instance of the Redis client as a private variable named
+    """
 
     def __init__(self) -> None:
         """ init method"""
         self._redis = redis.Redis()
-        self._redis.flushdb(True)
+        self._redis.flushdb()
         self.call_count = 0
 
     @count_calls
